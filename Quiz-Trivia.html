@@ -105,97 +105,122 @@
 
     <script>
 
-        async function loadCategories() {
-            const response = await fetch('https://opentdb.com/api_category.php');
-            const data = await response.json();
-            const select = document.getElementById('category');
-            
-            select.innerHTML = '<option value="">Toutes</option>';
-            data.trivia_categories.forEach(category => {
-                select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-            });
+  
+function loadCategories() {
+            fetch('https://opentdb.com/api_category.php')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var select = document.getElementById('category');
+                    select.innerHTML = '<option value="">Toutes</option>';
+                    var cats = data.trivia_categories;
+                    for (var i = 0; i < cats.length; i++) {
+                        select.innerHTML += '<option value="' + cats[i].id + '">' + cats[i].name + '</option>';
+                    }
+                })
+
         }
 
 
         function generateApiUrl(params) {
-            const baseUrl = 'https://opentdb.com/api.php?';
-            const query = new URLSearchParams(params).toString();
-            return baseUrl + query;
+            var url = 'https://opentdb.com/api.php?amount=' + encodeURIComponent(params.amount);
+            if (params.category) {
+                url += '&category=' + encodeURIComponent(params.category);
+            }
+            if (params.difficulty) {
+                url += '&difficulty=' + encodeURIComponent(params.difficulty);
+            }
+            if (params.type) {
+                url += '&type=' + encodeURIComponent(params.type);
+            }
+            return url;
         }
 
-
         function decodeHtml(html) {
-            const txt = document.createElement('textarea');
+            var txt = document.createElement('textarea');
             txt.innerHTML = html;
             return txt.value;
         }
 
 
         function renderQuestions(questions) {
-            const container = document.getElementById('questions');
-            let html = '';
-            
-            questions.forEach((q, i) => {
-                const answers = [...q.incorrect_answers, q.correct_answer]
-                    .sort(() => Math.random() - 0.5)
-                    .map(a => `<label>
-                        <input type="radio" name="q${i}" value="${a}">
-                        ${decodeHtml(a)}
-                    </label>`).join('');
+            var container = document.getElementById('questions');
+            var html = '';
+            for (var i = 0; i < questions.length; i++) {
+                var q = questions[i];
+
+                var answers = q.incorrect_answers.concat([q.correct_answer]);
+
+                for (var j = answers.length - 1; j > 0; j--) {
+                    var k = Math.floor(Math.random() * (j + 1));
+                    var temp = answers[j];
+                    answers[j] = answers[k];
+                    answers[k] = temp;
+                }
+                html += '<div class="question">';
+                html += '<h3>' + decodeHtml(q.question) + '</h3>';
                 
-                html += `<div class="question">
-                    <h3>${decodeHtml(q.question)}</h3>
-                    <div class="answers">${answers}</div>
-                </div>`;
-            });
-            
+                for (var j = 0; j < answers.length; j++) {
+                    html += '<label>';
+                    html += '<input type="radio" name="q' + i + '" value="' + answers[j] + '"> ' + decodeHtml(answers[j]);
+                    html += '</label>';
+                }
+                html += '</div>';
+            }
             container.innerHTML = html;
             document.getElementById('quizContainer').style.display = 'block';
         }
 
 
         function calculateResults(questions) {
-            let score = 0;
-            
-            questions.forEach((q, i) => {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                if (selected && selected.value === q.correct_answer) score++;
-            });
-            
+            var score = 0;
+            for (var i = 0; i < questions.length; i++) {
+                var selected = document.querySelector('input[name="q' + i + '"]:checked');
+                if (selected && selected.value === questions[i].correct_answer) {
+                    score++;
+                }
+            }
             return score;
         }
 
 
-        document.getElementById('quizConfig').addEventListener('submit', async (e) => {
+        document.getElementById('quizConfig').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const params = {
-                amount: document.getElementById('amount').value,
-                category: document.getElementById('category').value,
-                difficulty: document.getElementById('difficulty').value,
-                type: document.getElementById('type').value
+
+            var amount = document.getElementById('amount').value;
+            var category = document.getElementById('category').value;
+            var difficulty = document.getElementById('difficulty').value;
+            var type = document.getElementById('type').value;
+
+            var params = {
+                amount: amount,
+                category: category,
+                difficulty: difficulty,
+                type: type
             };
-            
-            try {
-                const response = await fetch(generateApiUrl(params));
-                const data = await response.json();
-                
-                if (data.response_code === 0) {
-                    window.questions = data.results;
-                    renderQuestions(data.results);
-                } else {
-                    alert('Aucune question trouvée avec ces critères !');
-                }
-            } catch (error) {
-                console.error('Erreur API :', error);
-            }
+
+            var url = generateApiUrl(params);
+
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.response_code === 0) {
+                        window.questions = data.results; 
+                        renderQuestions(data.results);
+                    } else {
+                        alert('Aucune question trouvée avec ces critères !');
+                    }
+                })
+
         });
 
-        document.getElementById('submitQuiz').addEventListener('click', () => {
-            const score = calculateResults(window.questions);
-            document.getElementById('results').innerHTML = `
-                <h2>Résultat : ${score}/${window.questions.length}</h2>
-            `;
+       
+        document.getElementById('submitQuiz').addEventListener('click', function() {
+            var score = calculateResults(window.questions);
+            document.getElementById('results').innerHTML = '<h2>Résultat : ' + score + '/' + window.questions.length + '</h2>';
         });
 
 
