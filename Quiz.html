@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="Quiz.css">
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div class="title">
+            <div>
+                <div class="title-result">Result</div>
+                <div id="result">
+                    0/20
+                </div>
+            </div>
+            <div class="sub-title">
+                JavaScript Quiz
+            </div>
+        </div>
+
+        <button id="quiz-start">Start Quiz</button>
+
+        <!--Question1-->
+        <div id="question1" style="display:none;">
+            <div id="quest1">
+                <h2 id="quiz-question">1. What is the correct way to declare a JavaScript variable? (3 pts)</h2>
+                <div class="countdown" id="timer1">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 1)">var myVar;</div>
+                <div class="option" onclick="selectOption(this, 1)">variable myVar;</div>
+                <div class="option" onclick="selectOption(this, 1)">v myVar;</div>
+                <div class="option" onclick="selectOption(this, 1)">declare myVar;</div>
+            </div>
+            <button id="next1" onclick="next(1)">Next Question</button>
+        </div>
+
+        <!--Question2-->
+        <div id="question2" style="display:none;">
+            <div id="quest2">
+                <h2 id="quiz-question">2. Which symbol is used for single-line comments in JavaScript?  (2 pts)</h2>
+                <div class="countdown" id="timer2">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 2)">#</div>
+                <div class="option" onclick="selectOption(this, 2)">--</div>
+                <div class="option" onclick="selectOption(this, 2)">/* */</div>
+                <div class="option" onclick="selectOption(this, 2)">//</div>
+            </div>
+            <button id="next2" onclick="next(2)">Next Question</button>
+        </div>
+
+        <!--Question3-->
+        <div id="question3" style="display:none;">
+            <div id="quest3">
+                <h2 id="quiz-question">3. How do you create a function in JavaScript?  (2 pts)</h2>
+                <div class="countdown" id="timer3">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 3)">function myFunction()</div>
+                <div class="option" onclick="selectOption(this, 3)">def myFunction()</div>
+                <div class="option" onclick="selectOption(this, 3)">func myFunction()</div>
+                <div class="option" onclick="selectOption(this, 3)">create function myFunction()</div>
+            </div>
+            <button id="next3" onclick="next(3)">Next Question</button>
+        </div>
+
+        <!--Question4-->
+        <div id="question4" style="display:none;">
+            <div id="quest4">
+                <h2 id="quiz-question">4. Which event occurs when the user clicks on an HTML element?  (2 pts)</h2>
+                <div class="countdown" id="timer4">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 4)">onchange</div>
+                <div class="option" onclick="selectOption(this, 4)">onmouseover</div>
+                <div class="option" onclick="selectOption(this, 4)">onclick</div>
+                <div class="option" onclick="selectOption(this, 4)">onhover</div>
+            </div>
+            <button id="next4" onclick="next(4)">Next Question</button>
+        </div>
+
+        <!--Question5-->
+        <div id="question5" style="display:none;">
+            <div id="quest5">
+                <h2 id="quiz-question">5. How do you select an element by ID in JavaScript?  (2 pts)</h2>
+                <div class="countdown" id="timer5">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 5)">document.querySelector('#id')</div>
+                <div class="option" onclick="selectOption(this, 5)">document.getElementById('id')</div>
+                <div class="option" onclick="selectOption(this, 5)">document.selectElement('id')</div>
+                <div class="option" onclick="selectOption(this, 5)">Answer 3document.pick('id')</div>
+            </div>
+            <button id="next5" onclick="next(5)">Next Question</button>
+        </div>
+
+        <!--Question6-->
+        <div id="question6" style="display:none;">
+            <div id="quest6">
+                <h2 id="quiz-question">6. What is the strict equality operator in JavaScript?  (2 pts)</h2>
+                <div class="countdown" id="timer6">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 6)">==</div>
+                <div class="option" onclick="selectOption(this, 6)">===</div>
+                <div class="option" onclick="selectOption(this, 6)">!=</div>
+                <div class="option" onclick="selectOption(this, 6)">=</div>
+            </div>
+            <button id="next6" onclick="next(6)">Next Question</button>
+        </div>
+
+        <!--Question7-->
+        <div id="question7" style="display:none;">
+            <div id="quest7">
+                <h2 id="quiz-question">7. How do you print something to the console in JavaScript?  (2 pts)</h2>
+                <div class="countdown" id="timer7">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 7)">print('Hello World')</div>
+                <div class="option" onclick="selectOption(this, 7)">echo('Hello World')</div>
+                <div class="option" onclick="selectOption(this, 7)">console.log('Hello World')</div>
+                <div class="option" onclick="selectOption(this, 7)">log('Hello World')</div>
+            </div>
+            <button id="next7" onclick="next(7)">Next Question</button>
+        </div>
+
+        <!--Question8-->
+        <div id="question8" style="display:none;">
+            <div id="quest8">
+                <h2 id="quiz-question">8. Which method is used to execute a function repeatedly at set intervals?  (2 pts)</h2>
+                <div class="countdown" id="timer8">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 8)">setTimeout()</div>
+                <div class="option" onclick="selectOption(this, 8)">setInterval()</div>
+                <div class="option" onclick="selectOption(this, 8)">clearInterval()</div>
+                <div class="option" onclick="selectOption(this, 8)">loop()</div>
+            </div>
+            <button id="next8" onclick="next(8)">Next Question</button>
+        </div>
+
+        <!--Question9-->
+        <div id="question9" style="display:none;">
+            <div id="quest9">
+                <h2 id="quiz-question">9. What does parseInt('10') return?  (2 pts)</h2>
+                <div class="countdown" id="timer9">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 9)">10</div>
+                <div class="option" onclick="selectOption(this, 9)">"10"</div>
+                <div class="option" onclick="selectOption(this, 9)">Nan</div>
+                <div class="option" onclick="selectOption(this, 9)">undefined</div>
+            </div>
+            <button id="next9" onclick="next(9)">Next Question</button>
+        </div>
+
+        <!--Question10-->
+        <div id="question10" style="display:none;">
+            <div id="quest10">
+                <h2 id="quiz-question">10. How do you convert a JavaScript object to a JSON string?  (1 pts)</h2>
+                <div class="countdown" id="timer10">10</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(this, 10)">JSON.parse(obj)</div>
+                <div class="option" onclick="selectOption(this, 10)">JSON.stringify(obj)</div>
+                <div class="option" onclick="selectOption(this, 10)">toJSON(obj)</div>
+                <div class="option" onclick="selectOption(this, 10)">stringify(obj)</div>
+            </div>
+            <button id="end-quiz" onclick="show_result()">Show Results</button>
+        </div>
+    </div>
+
+    <script src="Quiz.js"></script>
+</body>
+</html>

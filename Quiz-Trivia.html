@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Generator</title>
+    <style>
+
+        body {
+            background-color: #13191f;
+        }
+
+        #generate_quiz {
+            background-color: #13191f;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            margin-bottom: 5px;
+            height: 40px;
+        }
+
+        .background {
+            margin-top: 20px;
+            background-color:#363c4c;
+            width: 900px;
+            margin-left: 300px;
+        }
+        #submitQuiz {
+            background-color: #13191f;
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            width: 100px;
+            margin-bottom: 10px;    
+        }
+        .container {
+                     max-width: 600px;
+                     margin: 20px auto;
+
+                    }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; 
+                margin-bottom: 5px; 
+                margin-top: 20px;
+                color: white;
+                font-weight: bold;
+            }
+        
+            h2 {
+                font-weight:bold;
+                color:white;
+                margin-top: -10px;
+                text-align: center;
+            }
+
+        select, input { width: 100%; padding: 8px; }
+        .question { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="container">
+
+            <form id="quizConfig">
+                <div class="form-group">
+                    <label>Catégorie :</label>
+                    <select id="category"></select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Difficulté :</label>
+                    <select id="difficulty">
+                        <option value="">Toutes</option>
+                        <option value="easy">Facile</option>
+                        <option value="medium">Moyen</option>
+                        <option value="hard">Difficile</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Type de question :</label>
+                    <select id="type">
+                        <option value="">Tous</option>
+                        <option value="multiple">Choix multiple</option>
+                        <option value="boolean">Vrai/Faux</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre de questions :</label>
+                    <input type="number" id="amount" min="1" max="50" value="10">
+                </div>
+                
+                <button type="submit" id="generate_quiz">Générer le quiz</button>
+            </form>
+    
+            <div id="quizContainer" style="display: none;">
+                <div id="questions"></div>
+                <button id="submitQuiz">Soumettre</button>
+            </div>
+            
+
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+
+        async function loadCategories() {
+            const response = await fetch('https://opentdb.com/api_category.php');
+            const data = await response.json();
+            const select = document.getElementById('category');
+            
+            select.innerHTML = '<option value="">Toutes</option>';
+            data.trivia_categories.forEach(category => {
+                select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+            });
+        }
+
+
+        function generateApiUrl(params) {
+            const baseUrl = 'https://opentdb.com/api.php?';
+            const query = new URLSearchParams(params).toString();
+            return baseUrl + query;
+        }
+
+
+        function decodeHtml(html) {
+            const txt = document.createElement('textarea');
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
+
+        function renderQuestions(questions) {
+            const container = document.getElementById('questions');
+            let html = '';
+            
+            questions.forEach((q, i) => {
+                const answers = [...q.incorrect_answers, q.correct_answer]
+                    .sort(() => Math.random() - 0.5)
+                    .map(a => `<label>
+                        <input type="radio" name="q${i}" value="${a}">
+                        ${decodeHtml(a)}
+                    </label>`).join('');
+                
+                html += `<div class="question">
+                    <h3>${decodeHtml(q.question)}</h3>
+                    <div class="answers">${answers}</div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('quizContainer').style.display = 'block';
+        }
+
+
+        function calculateResults(questions) {
+            let score = 0;
+            
+            questions.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value === q.correct_answer) score++;
+            });
+            
+            return score;
+        }
+
+
+        document.getElementById('quizConfig').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const params = {
+                amount: document.getElementById('amount').value,
+                category: document.getElementById('category').value,
+                difficulty: document.getElementById('difficulty').value,
+                type: document.getElementById('type').value
+            };
+            
+            try {
+                const response = await fetch(generateApiUrl(params));
+                const data = await response.json();
+                
+                if (data.response_code === 0) {
+                    window.questions = data.results;
+                    renderQuestions(data.results);
+                } else {
+                    alert('Aucune question trouvée avec ces critères !');
+                }
+            } catch (error) {
+                console.error('Erreur API :', error);
+            }
+        });
+
+        document.getElementById('submitQuiz').addEventListener('click', () => {
+            const score = calculateResults(window.questions);
+            document.getElementById('results').innerHTML = `
+                <h2>Résultat : ${score}/${window.questions.length}</h2>
+            `;
+        });
+
+
+        loadCategories();
+    </script>
+</body>
+</html>
